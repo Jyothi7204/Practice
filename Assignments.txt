@@ -1,0 +1,655 @@
+Big decimal
+Creating Big decimal objects
+methods in bigdecimal class
+Arithmetic: add(), subtract(), multiply(), divide()
+Comparison: compareTo(), equals()
+Scaling: setScale(), stripTrailingZeros()
+Conversion: toPlainString(), doubleValue(), intValue()
+rounding  the bigdecimals
+		setScale(scale, RoundingMode.HALF_UP);
+rounding modes
+new BigDecimal() vs BigDecimal.of()
+public class Main {
+    public static void main(String[] args) {
+        BigDecimal bd=BigDecimal.valueOf(1234567890.32145);
+        System.out.println(bd);
+        BigDecimal bd1=bd.setScale(4, RoundingMode.HALF_DOWN);
+        System.out.println(bd1);
+        //methods
+        BigDecimal a=new BigDecimal(123456);
+        System.out.println("addition "+a.add(new BigDecimal(345678)));
+        System.out.println("substraction "+a.subtract(new BigDecimal(345678)));
+        System.out.println("multiplication "+a.multiply(new BigDecimal(345678)));
+        System.out.println("division "+a.divide(new BigDecimal(345678),2,RoundingMode.HALF_UP));
+        System.out.println("Comparing "+bd.compareTo(bd1));
+    }
+}
+
+
+Optional:
+deal with null values
+reduce with nullpointer exception
+
+Creation of optional
+	Optional<String> optionalString = Optional.of("Hello");
+	Optional<String> optionalString = Optional.ofNullable(null); // empty Optional
+	Optional<String> optionalString2 = Optional.ofNullable("Hello");
+	Optional<String> optionalString = Optional.empty(); // empty Optional
+
+methods in optional,
+	isPresent(), ifPresent(),OrElse(),OrElseGet(),map(),filter(),get(),OrElseThrow(),flatmap(),ifPresentOrElse()
+
+
+public class Main {
+    public static void main(String[] args) {
+        Optional<String> op = Optional.of("Hello");
+        System.out.println(op);
+        Optional<String> op1 = Optional.ofNullable(null);
+        System.out.println(op1);
+        Optional<String> op3 = Optional.ofNullable("hello from op3");
+        System.out.println(op3);
+        Optional<String> op2 = Optional.empty();
+        System.out.println(op2);
+        op3.ifPresent(s -> System.out.println(s.toUpperCase()));
+        Optional<String> op4=op3.map(String::toUpperCase);
+        System.out.println(op4.get());//do not use
+        System.out.println(op1.orElse("Not found"));//eager
+        System.out.println(op1.orElseGet(()->op3.get()));//lazy
+        Optional<String> name = Optional.of("John Doe");
+        String upname=name.map(String::toUpperCase).filter(s->s.startsWith("JOHN")).orElse("Nope");
+        System.out.println(upname);
+       // System.out.println(op1.orElseThrow(()->new RuntimeException("Exception")));
+        op3.map(String::toUpperCase).get();
+       // op3.flatMap(s->s.startsWith("h"));
+    }
+}
+
+Day 3:
+Predicate:funtional interface, take type T and return boolean, method Test(),filtering data
+supplier:functional interface,take no parameters. return type T,method get(),lazy value generation Option.OrElse()
+consumer:functional interface, takes one argument,returns nothing(Have to print),method accept(),Iterating over collections,logging
+
+
+class Employee
+{
+    String name;
+    int age;
+    int id;
+    double salary;
+    public Employee(String name, int age, int id,double salary) {
+        this.name = name;
+        this.age = age;
+        this.id = id;
+        this.salary=salary;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public int getId() {
+        return id;
+    }
+    public double getSalary()
+    {
+        return salary;
+    }
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                ", id=" + id +
+                '}';
+    }
+}
+public class Main {
+    public static Consumer<Employee> display=employee -> {
+        System.out.println(employee.name+" "+employee.age+" "+employee.id);
+
+    };
+    public static Predicate<Employee> gretersal=employee -> employee.getSalary()>34000;
+    public static BiPredicate<Employee, Integer> biprac=((employee, threshold) -> employee.getSalary()>threshold);
+    public static void main(String[] args) {
+        Employee e1=new Employee("Jpk",23,1,34000);
+        Employee e2=new Employee("spk",26,2,234456);
+        Employee e3=new Employee("npk",22,3,34567);
+        display.accept(e1);
+        display.accept(e2);
+        display.accept(e3);
+        System.out.println(gretersal.test(e1));
+        System.out.println(gretersal.test(e2));
+        System.out.println(gretersal.test(e3));
+        System.out.println(biprac.test(e1,30000));
+        System.out.println(biprac.test(e2,23000));
+        System.out.println(biprac.test(e3,566666));
+    }
+}
+
+import java.util.Random;
+import java.util.function.Function;
+import java.util.function.Supplier;
+class EmployeeP
+{
+    String FirstName;
+    String LastName;
+    int yob;
+    int id;
+
+    public EmployeeP(String firstName, String lastName, int yob, int id) {
+        FirstName = firstName;
+        LastName = lastName;
+        this.yob = yob;
+        this.id = id;
+    }
+
+    public String getFirstName() {
+        return FirstName;
+    }
+
+    public void setFirstName(String firstName) {
+        FirstName = firstName;
+    }
+
+    public String getLastName() {
+        return LastName;
+    }
+
+    public void setLastName(String lastName) {
+        LastName = lastName;
+    }
+
+    public int getYob() {
+        return yob;
+    }
+
+    public void setYob(int yob) {
+        this.yob = yob;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "EmployeeP{" +
+                "FirstName='" + FirstName + '\'' +
+                ", LastName='" + LastName + '\'' +
+                ", yob=" + yob +
+                ", id=" + id +
+                '}';
+    }
+}
+class User
+{
+    String username;
+    String passw;
+
+    public User(String username, String passw) {
+        this.username = username;
+        this.passw = passw;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassw() {
+        return passw;
+    }
+
+    public void setPassw(String passw) {
+        this.passw = passw;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "username='" + username + '\'' +
+                ", passw='" + passw + '\'' +
+                '}';
+    }
+}
+class passwordsupplier{
+    static Supplier<String> password=()-> {
+        String pass;
+        Random rand = new Random();
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder sb = new StringBuilder(16);
+        for (int i = 0; i < 16; i++) {
+            sb.append(characters.charAt(rand.nextInt(62)));
+        }
+        return sb.toString();
+    };
+
+}
+public class Pracques2
+{
+
+    public static Function<EmployeeP,User> convert=(employee)->
+    {
+        String username=employee.getFirstName()+employee.getLastName()+employee.getId()+employee.getYob();
+        String passw=passwordsupplier.password.get();
+        return new User(username,passw);
+    };
+
+    public static void main(String[] args)
+    {
+        EmployeeP employee = new EmployeeP("Jyothi","kulkarni", 1990, 12345);
+        User user=convert.apply(employee);
+        System.out.println(user);
+
+    }
+
+}
+
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+class EmployeeC
+{
+    String FirstName;
+    String LastName;
+    LocalDate DateOfBirth;
+
+    public EmployeeC(String firstName, String lastName, LocalDate dateOfBirth) {
+        FirstName = firstName;
+        LastName = lastName;
+        DateOfBirth = dateOfBirth;
+    }
+
+
+
+}
+public class compQues {
+
+    public static void main(String[] args)
+    {
+        EmployeeC e1=new EmployeeC("Jyothi","Kulkarni",LocalDate.of(1990, 3, 15));
+        EmployeeC e2=new EmployeeC("shantala","Ku",LocalDate.of(1994, 7, 15));
+        EmployeeC e3=new EmployeeC("Jy","Kul",LocalDate.of(1995, 1, 15));
+        EmployeeC e4=new EmployeeC("Jyo","Kulkarni",LocalDate.of(1997, 8, 15));
+        List<EmployeeC> employeeCList=new ArrayList<>();
+        employeeCList.add(e1);
+        employeeCList.add(e2);
+        employeeCList.add(e3);
+        employeeCList.add(e4);
+       // System.out.println("Hello");
+        employeeCList.sort((en,en1)->en.FirstName.compareTo(en1.FirstName));
+        employeeCList.sort((en,en1)->Integer.compare(en.DateOfBirth.getMonthValue(),en1.DateOfBirth.getMonthValue()));
+
+        for(EmployeeC e:employeeCList)
+        {
+            System.out.println(e.DateOfBirth+" "+e.FirstName);
+        }
+
+    }
+}
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.function.Function;
+import java.util.function.Supplier;
+class EmployeeP
+{
+    String FirstName;
+    String LastName;
+    int yob;
+    int id;
+
+    public EmployeeP(String firstName, String lastName, int yob, int id) {
+        FirstName = firstName;
+        LastName = lastName;
+        this.yob = yob;
+        this.id = id;
+    }
+
+    public String getFirstName() {
+        return FirstName;
+    }
+
+    public void setFirstName(String firstName) {
+        FirstName = firstName;
+    }
+
+    public String getLastName() {
+        return LastName;
+    }
+
+    public void setLastName(String lastName) {
+        LastName = lastName;
+    }
+
+    public int getYob() {
+        return yob;
+    }
+
+    public void setYob(int yob) {
+        this.yob = yob;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "EmployeeP{" +
+                "FirstName='" + FirstName + '\'' +
+                ", LastName='" + LastName + '\'' +
+                ", yob=" + yob +
+                ", id=" + id +
+                '}';
+    }
+}
+class User
+{
+    String username;
+    String passw;
+
+    public User(String username, String passw) {
+        this.username = username;
+        this.passw = passw;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassw() {
+        return passw;
+    }
+
+    public void setPassw(String passw) {
+        this.passw = passw;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "username='" + username + '\'' +
+                ", passw='" + passw + '\'' +
+                '}';
+    }
+}
+class passwordsupplier{
+    static Supplier<String> password=()-> {
+        String pass;
+        Random rand = new Random();
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder sb = new StringBuilder(16);
+        for (int i = 0; i < 16; i++) {
+            sb.append(characters.charAt(rand.nextInt(62)));
+        }
+        return sb.toString();
+    };
+
+}
+public class Pracques2
+{
+
+    public static Function<EmployeeP,User> convert=(employee)->
+    {
+        String username=employee.getFirstName()+employee.getLastName()+employee.getId()+employee.getYob();
+        String passw=passwordsupplier.password.get();
+        return new User(username,passw);
+    };
+
+    public static void main(String[] args)
+    {
+        EmployeeP employee = new EmployeeP("Jyothi","kulkarni", 1990, 12345);
+        EmployeeP employee1 = new EmployeeP("shantala","kulkarni", 1990, 12345);
+        EmployeeP employee2 = new EmployeeP("jpk","kulkarni", 1990, 12345);
+        List<EmployeeP> emplist=new ArrayList<>();
+        emplist.add(employee);
+        emplist.add(employee1);
+        emplist.add(employee2);
+        User user=convert.apply(employee);
+        User user1=convert.apply(employee1);
+        User user2=convert.apply(employee2);
+        List<User> userlist=new ArrayList<>();
+        userlist.add(user);
+        userlist.add(user1);
+        userlist.add(user2);
+
+        System.out.println(user);
+        Thread t1=new Thread(()->userlist.forEach(System.out::println));
+        t1.start();
+        Thread t2=new Thread(()->emplist.forEach(System.out::println));
+        t2.start();
+
+    }
+
+}
+
+Day:5
+
+
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+class Employee5 {
+    private String firstName;
+    private String LastName;
+    private int yoj;
+    private String dept;
+    private double salary;
+
+    public Employee5(String firstName, String lastName, int yoj, String dept, double salary) {
+        this.firstName = firstName;
+        LastName = lastName;
+        this.yoj = yoj;
+        this.dept = dept;
+        this.salary = salary;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return LastName;
+    }
+
+    public int getYoj() {
+        return yoj;
+    }
+
+    public String getDept() {
+        return dept;
+    }
+
+    public double getSalary() {
+        return salary;
+    }
+
+    @Override
+    public String toString() {
+        return "Employee5{" +
+                "firstName='" + firstName + '\'' +
+                ", LastName='" + LastName + '\'' +
+                ", yoj=" + yoj +
+                ", dept='" + dept + '\'' +
+                ", salary=" + salary +
+                '}';
+    }
+}
+class Day5
+{
+    public static void main(String[] args)
+    {
+        //System.out.println("hello");
+        Employee5 emp1=new Employee5("jyothi","kulkarni",2024,"cs",30000);
+        Employee5 emp2=new Employee5("shantala","kulkarni",2022,"ess",30000);
+        Employee5 emp3=new Employee5("sannu","kulkarni",2023,"cse",30000);
+        Employee5 emp4=new Employee5("vijaya","kulkarni",2021,"ec",29000);
+        List<Employee5> emplist=new ArrayList<>();
+        emplist.add(emp1);
+        emplist.add(emp2);
+        emplist.add(emp3);
+        emplist.add(emp4);
+        System.out.println(emplist.stream().filter(emp->emp.getYoj()==2023).map(emp->emp.getFirstName()).collect(Collectors.toList()));
+        List<Employee5> SortedEmployees=emplist.stream().filter(emp->!emp.getDept().equals("HR")).sorted(Comparator.comparing(Employee5::getFirstName)).collect(Collectors.toList());
+        for(Employee5 emp:SortedEmployees)
+        {
+            System.out.println(emp);
+        }
+        emplist.stream().filter(emp->emp.getDept().equals("ec")).map(emp->emp.getSalary()+(emp.getSalary()*10/100)).forEach(System.out::println);
+        Stream.iterate(101,n->n+2).limit(10).forEach(System.out::println);
+        System.out.println(emplist.stream().sorted(Comparator.comparing(Employee5::getYoj)).map(Employee5::getFirstName).collect(Collectors.joining(",")));
+        System.out.println("Lowest salary:" +emplist.stream().min(Comparator.comparing(Employee5::getSalary)));
+
+        System.out.println(emplist.stream().filter(emp->emp.getSalary()>5000).map(emp->emp.getFirstName()+emp.getLastName()).collect(Collectors.toList()));
+       //
+        // emplist.stream().
+        System.out.println(emplist.stream().sorted(Comparator.comparing(Employee5::getYoj)).map(Employee5::getFirstName).collect(Collectors.joining(",")));
+        Map<String,Long> departmentcount=emplist.stream().collect(Collectors.groupingBy(Employee5::getDept,Collectors.counting()));
+        departmentcount.forEach((emp,count)->System.out.println(emp+" "+count));
+        Map<String,Double> avgsalary=emplist.stream().collect(Collectors.groupingBy(Employee5::getDept,Collectors.averagingDouble(Employee5::getSalary)));
+        avgsalary.forEach((dept,sala)->System.out.println(dept+" "+sala));
+        List<Employee5> names=emplist.stream().filter(emp->emp.getFirstName().startsWith("s")).collect(Collectors.toList());
+        names.forEach(emp->System.out.println(emp.getFirstName()));
+        System.out.println(emplist.stream().map(Employee5::getDept).distinct().collect(Collectors.toList()));
+        Map<String,Long> salgreater=emplist.stream().filter(emp->emp.getSalary()>500).collect(Collectors.groupingBy(Employee5::getDept,Collectors.counting()));
+        salgreater.forEach((emp,sal)->System.out.println(emp+" "+sal));
+        System.out.println(emplist.stream().max(Comparator.comparing(Employee5::getSalary)));
+        Double getavgsal=emplist.stream().mapToDouble(Employee5::getSalary).average().orElse(0.0);
+        System.out.println(emplist.stream().filter(emp->emp.getSalary()>getavgsal).map(Employee5::getFirstName).collect(Collectors.toList()));
+        System.out.println(emplist.stream().sorted(Comparator.comparing(Employee5::getSalary)).limit(1).collect(Collectors.toList()));
+    }
+}
+
+
+Day 10:
+
+Liskov substitution principle
+
+Here the objects of superclass is completely replaced or substituted by objects of subclass.
+
+
+
+public class Day10 {
+    public static void main(String[] args)
+    {
+        System.out.println("Good morning!");
+        ostrich o=new ostrich();
+        o.move();
+        parrot p= new parrot();
+        p.move();
+        Penguin pe=new Penguin();
+        pe.move();
+    }
+}
+class Bird
+{
+    public void move()  {
+        System.out.println("its moving");
+    }
+
+}
+class ostrich extends Bird{
+    public void move()  {
+       System.out.println("Moving......");
+    }
+}
+class parrot extends Bird{
+    public void move(){
+        System.out.println("Flying.......");
+    }
+}
+class Penguin extends Bird{
+    public void move()
+    {
+        System.out.println("Walking.........");
+    }
+}
+
+
+Day 11:
+
+Strategy design patterns
+
+It contains:
+Strategy : its an interface with the method
+concreate strategies:Classes which implement strategy interface and implement the method
+context:class that takes the strategy and call the methods in it
+main class: create concreate class and pass to context to get results
+
+interface PrintStratergy{
+    public void display();
+}
+class A implements PrintStratergy{
+    public void display()
+    {
+        for(int i=1;i<=10;i++)
+        {
+            System.out.println(i+" ");
+        }
+    }
+}
+class B implements PrintStratergy{
+    public void display(){
+        for(int i=1;i<=10;i=i+2)
+        {
+            System.out.println(i+" ");
+        }
+    }
+}
+class C implements PrintStratergy{
+    public void display(){
+        for(int i=2;i<=10;i=i+2){
+            System.out.println(i);
+        }
+    }
+}
+class PrintContext{
+    PrintStratergy ps;
+    PrintContext(PrintStratergy ps)
+    {
+        this.ps=ps;
+    }
+    public void print()
+    {
+        ps.display();
+    }
+}
+public class Day11 {
+    public static void main(String[] args)
+    {
+        PrintStratergy ps=new C();
+        PrintContext pc=new PrintContext(ps);
+        pc.print();
+
+
+       }
+
+    }
+
+
