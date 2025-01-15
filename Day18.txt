@@ -1,0 +1,25 @@
+// to fetch employee names and their manager names
+select e1.employee_name,e2.employee_name
+from
+employee e1
+join
+employee e2
+on e1.managerId=e2.employeeId
+
+
+
+//fetch employee details for maximum salary employee in each department
+SELECT * 
+FROM employee emp 
+WHERE emp.salary = (
+    SELECT MAX(e.salary)
+    FROM employee e
+    WHERE e.department = emp.department
+    GROUP BY e.department
+);
+
+
+//delete duplicate rows
+delete from employee e
+where e.id = (select max(employee.eid) from Employee employee 
+where e.eame=employee.ename and e.emai=employee.ename )
